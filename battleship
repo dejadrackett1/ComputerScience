@@ -1,0 +1,296 @@
+'''
+Created on Nov 29, 2022
+Name: Deja Drackett
+Narrative: Battleship Game 
+Bugs / Errors: When getting the random numbers from the computers, it doesn't input those coordinates onto the computers ship arrays. 
+@author: DDrackett25
+'''
+#need 4 boards 2 for computer, and 2 for player
+#while loop asking the coordinates/where you want to go... 
+'''
+make the dots into ships, play sounds, tell how far you are from the nearest one...
+'''
+import random
+
+let_num = {'A':0,'B':1,'C':2,'D':3,'E':4,'F':5} #a visual guide to the specific coordinate. 
+
+def print_board(board): #similar to the for i in board, it is that + the visual aspect of the rows and columns. 
+    print('   0   1   2   3   4 ') #This is the letter row, that defines the column your coordinate is in. 
+    print(' --------------------') # a boarder between the playing space and the "directions" (for lack of a better word). 
+    row_num = 0
+    for row in board:
+        print("%d|%s|" % (row_num, "-".join(row))) #This is the number column that determines the row your coordinate is in. 
+        row_num +=1
+
+def place_player(ships):
+    num = 4          #This is used to stop after 4 runs    
+    while num > 0: #This while loop allows the player place 4 ships 
+        loop = 1
+        print("THESE ARE THE INPUTS THAT HIDE YOUR OWN 4 SHIPS \n===============================================\nPlease, when inputing you coordinates use the format (r,c)\nPlease input coordinates for 1 ships at a time\n")
+        while loop == 1:
+            ans = input("You have " + str(num) + " Ships left,\n" ) #This asks the player for the coordinates, and tells how many ships that the have left                def 
+            num = int(num)
+            if num == 1:
+                loop = 2
+            
+            if len(ans) != 3:
+                print("Only input two numbers please")
+                loop = 1
+            else:
+                try:
+                    ans = ans.split(",")
+                except ValueError:
+                    print("Please enter on only two numbers...the row, then the column number...")
+                    loop = 1
+
+                row = int(ans[0]) # This takes the first number of the input 
+                col = int(ans[1]) #this takes the column number and seperates it from the input
+                
+                try: 
+                    if row < 0 or col < 0:
+                        print("Please input positive numbers only")
+                        loop = 1   #this makes sure that it keeps going to to the while loop = 1
+                    elif (row > 4 or col > 4):
+                        print("You've inputed coordinates that are too high")
+                        loop = 1 
+
+                    elif (ships[row][col] == "[S]") or (ships[row][col] == "[-]"):#This restarts the loop
+                        print("Please choose a different spot")
+                        loop = 1 
+                    else:                                   #This assigns the ship placement aswell as changes the number left
+                        ships[row][col] = "[S]"
+                        num = num - 1
+                except:
+                        print("Please, when inputing you coordinates use the format (r,c)")
+                        continue
+    return ships 
+
+def computer_place(ships): #this function assigns random ship placements on the computer_ships array 
+    num = 4 
+    row = random.randint(0,4)
+    col = random.randint(0,4)
+    while num > 0:
+        loop = 1
+        while loop == 1:
+            try:
+                ans = (row,col)
+                num = int(num)
+                if num == 1:
+                    loop = 2
+                else:
+                    try:
+                        ans = ans.split(",")
+                    except:
+                        print("There was an error")
+                    row = int(ans[0]) # This takes the first number of the input 
+                    col = int(ans[1]) #this takes the column number and seperates it from the input
+                    try: 
+                        if row < 0 or col < 0:
+                            print("Please input positive numbers only")
+                            loop = 1   #this makes sure that it keeps going to to the while loop = 1
+                        elif (row > 4 or col > 4):
+                            print("You inputed coordinates are too high")
+                            loop = 1 
+                        elif (ships[row][col] == "[O]") or (ships[row][col] == "[-]"):  #if the inputs by the computer or taken, the computer has to try again 
+                            continue
+                        else:                                     #This assigns the ship placement aswell as changes the number left
+                            ships[row][col] = "[S]"
+                            num = num - 1
+                            ships[row][col] = "[O]"
+                            loop = loop + 1
+                                    
+                    except:
+                        print("there was an error")
+                    
+            except:
+                print("There was an error...")   
+
+
+    return ships               #return the board with the added computer inputs. 
+
+def play_shoot(stats, player_guess,computer_ships):#This function is used to have the player shoot the computers ships
+    loop = 1
+
+    while loop == 1:
+        ans = input("===================================== \nThis is to shoot on the computers ships\n=====================================\nPLAYER: Please Enter Row, Column Guess:\n")
+        if len(ans) != 3:
+            print("Please input only two numbers")
+            loop = 1
+        else:
+            try:
+                ans = ans.split(",")
+            except ValueError:
+                    print("please input two numbers only")
+                    play_shoot(stats, player_guess, computer_ships) #This recalls the player_choice function in it
+            try:
+                    row = int(ans[0]) #This converts the first number for the row
+                    col = int(ans[1]) # This converts the second number for the column
+
+            except ValueError:
+                    print("please input only 2 numbers")
+                    play_shoot(stats, player_guess, computer_ships)
+            if row > 4 or col > 4:
+                    print("Your coordinates that you inputed are too high")
+                    play_shoot(stats, player_guess, computer_ships)
+            elif (computer_ships[row][col] == "[O]") or (computer_ships[row][col] == "[-]"):
+                    print("please input a different spot")
+                    play_shoot(stats, player_guess, computer_ships)
+            else:
+                if computer_ships[row][col] == "[O]":
+                    computer_ships[row][col] = "[O]"
+                    player_guess[row][col] = "[O]"
+                    stats = 1
+                elif computer_ships[row][col] == "[ ]":
+                    computer_ships[row][col] = "[-]"
+                    player_guess[row][col] = "[-]"
+                    stats = 2
+                loop = 2 
+
+    return stats, player_guess, computer_ships
+
+
+def comp_shoot(stat, computer_guess, player_ships, computer_ships): #This function 
+    loop = 1            #the col is assigned random column number
+
+    while loop == 1:
+        print("Line 126")
+        row = random.randint(0,4) #The row is assigned to a random row number 
+        col = random.randint(0,4)#the col assigns the random number to the column
+        print("The computers row number was" + str(row))#this prints out what the outputs are for the row and col
+        print("The computers column number was" + str(col)) #This prints out the column number inputed or randomized 
+        if(player_ships[row][col] == "[O]") or (player_ships[row][col] == "[-]"):    #if the inputs that were randomly chosen by computer are occupied, the computer has to try again 
+            print("Opps you already went there, please try again")
+            loop = 1 #This brings it back up to try again 
+            continue
+        else:
+            if player_ships[row][col] == "[S]":  #This takes the random row and col and says if those coordinates on the player_ship arrays = S those things underneath are put into play.
+                player_ships[row][col] = "[O]"   #This would make the S on the array an O becuase it was hit 
+                computer_guess[row][col] = "[O]" #Then that point is put on the computers guessing array
+                stat = 1                         #the stats are changed to 1
+                loop = 2                         #the loop is changed to 2
+            elif player_ships[row][col] == "[ ]":
+                player_ships[row][col] = "[-]"
+                computer_ships[row][col] = "[-]"
+                stat = 2
+                loop = 2
+    return stat, computer_guess, player_ships
+
+def did_win(turn, guess):
+    win_count = 0
+    row = 0
+    col = 0
+
+    while row < 5:
+        col = 0 
+        while col < 5:
+            if guess[row][col] == "[O]":
+                win_count = win_count + 1
+                col = col + 1
+            else:
+                col = col + 1
+        row = row + 1
+    if win_count == 4:
+        if turn == 1:
+            en = 1
+        elif turn == 2:
+            en = 2
+    else:
+        en = 0
+    return en
+
+
+def print_in(en, turn, stats, plays):
+        if turn == 1:           #if the turn variable =  1, this outputs the player outcome of the move that had taken
+            if stats == 1:       #these stats returns the status of the ships...
+                print("\n Ohhhh...You sunk my ship! \n")
+            elif stats == 2:
+                print("HAHAHA you missed my ships!!!")
+        
+        elif turn == 2:         # if the turn variable = 2, this outputs the computer outputs of the move that it had just randomized...
+            if stats == 1:
+                print("\n ITS MY TURN: I SUNK YOUR SHIP!!!!\n")
+            elif stats == 2:
+                print("\n ITS MY TURN: oh it looks missed \n")
+
+        if en == 1: 
+            print("\nOHHH YOU LOSE!!!\n")
+        else:
+            print("\n You have " + str(4 - plays) + " moves left\n")  #This prints out the remainiing turn left for the differnt players...both the computer and the player 
+        
+
+def main():
+
+    player_guess = [["{ }", "{ }", "{ }", "{ }", "{ }"], #this is the board for where the player is guessing/shooting
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"]]
+
+    player_ships = [["{ }", "{ }", "{ }", "{ }", "{ }"], #This board is for the players personally ships
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"]]
+    
+    computer_guess = [["{ }", "{ }", "{ }", "{ }", "{ }"], #This board is for the computers shots/guesses
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"]]
+    
+    computer_ships = [["{ }", "{ }", "{ }", "{ }", "{ }"],#This board is for the computers personally ships. 
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"],
+                ["{ }", "{ }", "{ }", "{ }", "{ }"]]
+   
+    plays = 0               #this counts the number of moves 
+    computer = 2            #This 2 represents the computer 
+    player = 1              # this 1 represents the player
+    en = 0                  #if the en = 0 that means that the game continues, if it = 1, then the player won, and 2 means that they lost...
+    #if it changes number, that means that 1 means that they sunk a ship and if its 2 then, that means that they missed.
+    computerstatus = 0      
+    playerstatus = 0
+    print("Welcome to the GCDS Battle Ship game!!!")
+    print("Lets go over some rules...If you see an S, that means that that is a placed ship. If you see a O that means that a ship has been hit... and and - means that the ship was missed...you get 10 shots each.\n \nTO MAKE IT EASIER...\n{S} = a ship, \n(O) = A Hit ship, \n and \n[-] = a missed ship \n and \n You get 10 shots each ")
+    print("\nYOUR GUESSES:")
+    print_board(player_guess)           #This calls print_board with the parameter of the player_guesses board...
+    print("\nYOUR PERSONAL SHIPS: ")
+    print_board(player_ships)   #This calls print_board with the parameter of the player_ships board...
+    print("\n===============================================")
+    player_ships = place_player(player_ships) #this reassigns the value of the pboard_ships
+    print("\n YOUR PERSONAL SHIPS:")
+    print_board(player_ships)           #This prints the updated board
+    
+    print("234")
+    computer_ships = computer_place(computer_ships)
+    print("236")
+
+    
+    while plays < 5: #with this while loop, the player only had 10 moves to win or lose
+
+        playerstatus, player_guess, computer_ships = play_shoot(playerstatus, player_guess, computer_ships)    #reassigning them with the functions outputs by calling the function
+        en = did_win(player, player_guess)   #this checks if any has won
+        print_in(en,computer, computerstatus, plays)
+        if en != 0:
+            break 
+        
+        computerstatus,computer_guess, player_ships = comp_shoot(computerstatus, computer_guess, player_ships, computer_ships)
+        en = did_win(computer, computer_guess)
+        print_in(en, computer, computerstatus, plays)
+        if en != 0:
+            break
+
+        print("\n YOUR GUESSES:\n")
+        print_board(player_guess)
+        print("\nYOUR SHIPS:\n")
+        print_board(player_ships)
+
+        plays =  plays + 1
+    print("\n TIE, AW IT LOOKS LIKE NO ONE WON!!!:")
+    print(computer_guess, player_guess)
+
+#print("COMPUTER SHIPS")
+    #print_board(computer_ships)        
+if __name__ == '__main__':
+    main()
