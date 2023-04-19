@@ -1,0 +1,31 @@
+'''
+Created on Mar 30, 2023
+
+@author: DDrackett25
+'''
+#exersize 1
+import string
+def main():
+    addr = open('G:\My Drive\Computer Science\CS\Assignments\mbox-short.txt','r')   #This opens up the file 
+    count = {}                                                                  #This turns the file into a dictionary 
+    di = []                                                                
+    for line in addr:                                                           #This is a for loop that only works with the line in the file that start with for...that is determined down below
+        line = line.translate(str.maketrans('','', string.punctuation))         #This takes out the punctuation
+        words = line.lower().split()                                            #This puts it into lowercase and then it splits the line so that you can work with the different words
+        if not line.startswith('From'):                                                  #This takes the first word of the line, and if it doesn't start with 'from',it skips, and goes onto the next line
+            continue
+        x = words[1]                                                            #this is a variable for the words in the 1th positions
+        di.append(x)                                                            #This puts all of the words in the 1th position into the list called di
+    for num in di:                                                              #the word num is a temporary variable that holds thins integer below 
+        count[num] = count.get(num, 0) + 1                                      #this takes the number,and it counts the number of times the emails are shown in the list
+
+    emails = []                                                                 #This establishes another list 
+    for key, val in count.items():                                              #fo key, val in the dictionary 
+        emails.append((key,val))                                                # This part put the values and the keys into the 'emails' lsit 
+    emails.sort(reverse=True)                                                   #This sorts the entire line from highest to lowers amount of emails 
+    
+    for val, key in emails[:1]:                                                 #This takes the email adress with the highest number of emails, and prints it
+        print(key, val)
+    
+if __name__ == '__main__':
+    main()

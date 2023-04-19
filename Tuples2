@@ -1,0 +1,43 @@
+'''
+Name: Deja Drackett 
+Date: Apr 4th, 2023
+Narrative: This "counts the distribution of the hour of the day for each of the messages" 
+'''
+#Exersize 2
+import string
+import urllib.request
+def main():
+    hour = urllib.request.urlopen("http://www.py4inf.com/code/mbox-short.txt")
+    count = {}
+    hrs = []
+
+    for line in hour:
+        line = line.decode('utf-8')
+        if not line.startswith('From'):                                                  #This takes the first word of the line, and if it doesn't start with 'from',it skips, and goes onto the next line
+            continue
+        line_list = line.lower().split() 
+             
+        if len(line_list) > 5:
+            #print(line_list)
+            clock = line_list[5]
+            hrs.append(clock)
+            print(hrs)
+    emails = []
+    for num in hrs:
+        n = num.split(':')
+        y = n[0]
+        emails.append(y)
+        print(emails)
+    for i in emails:
+        count[y] = count.get(i, 0) + 1
+
+    lst = []
+    for key, val in count.items():
+        lst.append((key,val))
+    lst.sort(reverse=True)
+    print(key,val)
+
+
+
+if __name__ == '__main__':
+    main()
